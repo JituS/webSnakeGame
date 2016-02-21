@@ -21,6 +21,7 @@ var init = function(){
 
 var directions = {
 	up:function(){
+		state.curruntStatus = "resume";
 		if(snake.direction == "down"){
 			snake.body = snake.body.reverse();
 		}
@@ -34,6 +35,7 @@ var directions = {
 	},
 
 	down:function(){
+		state.curruntStatus = "resume";
 		if(snake.direction == "up"){
 			snake.body = snake.body.reverse();
 		}
@@ -47,6 +49,7 @@ var directions = {
 	},
 
 	left:function(){
+		state.curruntStatus = "resume";
 		if(snake.direction == "right"){
 			snake.body = snake.body.reverse();
 		}
@@ -60,6 +63,7 @@ var directions = {
 	},
 
 	right:function(){
+		state.curruntStatus = "resume";
 		if(snake.direction == "left"){
 			snake.body = snake.body.reverse();
 		}
@@ -210,7 +214,6 @@ var main = function(){
 	createSnake();
 	produceFood();
 	document.onkeydown = checkKey;
-	console.log(state)
 	document.querySelector("#pause").onclick = state.pause;
 	document.querySelector("#resume").onclick = state.resume;
 };
