@@ -16,19 +16,109 @@ var init = function(){
 		{x:30, y:380},
 		{x:30, y:370},
 	];
+	snake.direction = "down";
 };
+
+var directions = {
+	up:function(){
+		if(snake.direction == "down"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].y = snake.body[0].y-=10;
+		printSnake(preX, preY);
+		snake.direction = "up";
+	    isDead();
+	},
+
+	down:function(){
+		if(snake.direction == "up"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].y = snake.body[0].y+=10;
+		printSnake(preX, preY);
+		snake.direction = "down";
+	    isDead();
+	},
+
+	left:function(){
+		if(snake.direction == "right"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].x = snake.body[0].x-=10;
+		printSnake(preX, preY);
+		snake.direction = "left";	    		
+		isDead();
+	},
+
+	right:function(){
+		if(snake.direction == "left"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].x = snake.body[0].x+=10
+		printSnake(preX, preY);
+		snake.direction = "right";	    	
+		isDead();
+	}
+};
+
+var state = {
+	pause:function(){
+		if(state.curruntStatus == "resume"){
+			state.curruntStatus = "pause";
+			clearInterval(interval);
+		}
+	},
+	resume:function(){
+		if(state.curruntStatus == "pause"){
+			state.curruntStatus = "resume";
+			directions[snake.direction]();
+			interval = setInterval(directions[snake.direction], 50);
+		}
+	},
+	curruntStatus:"resume"
+}
+
+var createSnake = function(){
+	for(var  i = 0; i < snake.body.length; i++){
+		var element = document.createElement("div");
+		element.setAttribute("class", "snake");
+		element.style.marginLeft = snake.body[i].x + "px"; 
+		element.style.marginTop = snake.body[i].y + "px"; 
+		document.querySelector("#playArea").appendChild(element);
+	}
+}
+
+var printSnake = function(preX, preY){
+	removeSnake();
+	for(var i = 1; i < snake.body.length;i++){
+		var _preX = snake.body[i].x;
+		var _preY = snake.body[i].y;
+		snake.body[i].y = preY;
+		snake.body[i].x = preX;
+		preX = _preX;
+		preY = _preY;
+	}
+	createSnake();
+}
 
 var eatFood = function(){
 	if(snake.body[0].x == food.x && snake.body[0].y == food.y){
 		var score = document.querySelector(".score");
 		var currentScore = score.textContent.split(":")[1];
 		document.querySelector(".score").textContent = "Score:" + (++currentScore);
-		snake.body.push({x:null, y:null});
-		var element = document.createElement("div");
-		element.setAttribute("class", "snake");
-		element.style.marginLeft = snake.body[0].x + "px"; 
-		element.style.marginTop = snake.body[0].y + "px"; 
-		document.querySelector("#playArea").appendChild(element);
+		snake.body.push({x:snake.body[0].x, y:snake.body[0].y});
 		produceFood();
 	}
 };
@@ -41,96 +131,11 @@ var produceFood = function(){
 	element.style.marginTop = food.y + "px";
 };
 
-var upArrow = function(){
-	eatFood();
+var removeSnake = function(){
 	var element = document.querySelectorAll(".snake");
-	var preX = element[0].style.marginLeft;
-	var preY = element[0].style.marginTop;
-	element[0].style.marginTop = (snake.body[0].y-=10) + "px";
-	for(var i = 1; i < element.length;i++){
-		var _preX = element[i].style.marginLeft;
-		var _preY = element[i].style.marginTop;
-		snake.body[i].y = element[i].style.marginTop = preY;
-		snake.body[i].x = element[i].style.marginLeft = preX;
-		preX = _preX;
-		preY = _preY;
+	for(var  i = 0; i < element.length; i++){
+		element[i].parentNode.removeChild(element[i]);
 	}
-	snake.direction = "top";
-    isDead();
-};
-
-var downArrow = function(){
-	eatFood();
-	var element = document.querySelectorAll(".snake");
-	var preX = element[0].style.marginLeft;
-	var preY = element[0].style.marginTop;
-	element[0].style.marginTop = (snake.body[0].y+=10) + "px";
-	for(var i = 1; i < element.length;i++){
-		var _preX = element[i].style.marginLeft;
-		var _preY = element[i].style.marginTop;
-		snake.body[i].y = element[i].style.marginTop = preY;
-		snake.body[i].x = element[i].style.marginLeft = preX;
-		preX = _preX;
-		preY = _preY;
-	}
-	snake.direction = "down";
-    isDead();
-};
-
-var leftArrow = function(){
-	eatFood();
-	var element = document.querySelectorAll(".snake");
-	var preX = element[0].style.marginLeft;
-	var preY = element[0].style.marginTop;
-	element[0].style.marginLeft = (snake.body[0].x-=10) + "px";
-	for(var i = 1; i < element.length;i++){
-		var _preX = element[i].style.marginLeft;
-		var _preY = element[i].style.marginTop;
-		snake.body[i].y = element[i].style.marginTop = preY;
-		snake.body[i].x = element[i].style.marginLeft = preX;
-		preX = _preX;
-		preY = _preY;
-	}
-	snake.direction = "left";	    		
-	isDead();
-};
-
-var rightArrow = function(){
-	eatFood();
-	var element = document.querySelectorAll(".snake");
-	var preX = element[0].style.marginLeft;
-	var preY = element[0].style.marginTop;
-	element[0].style.marginLeft = (snake.body[0].x+=10) + "px";
-	for(var i = 1; i < element.length;i++){
-		var _preX = element[i].style.marginLeft;
-		var _preY = element[i].style.marginTop;
-		snake.body[i].y = element[i].style.marginTop = preY;
-		snake.body[i].x = element[i].style.marginLeft = preX;
-		preX = _preX;
-		preY = _preY;
-	}
-	snake.direction = "right";	    	
-	isDead();
-};
-
-function checkKey(e) {
-    e = e || window.event;
-    if (e.keyCode == '38') {
-    	clearInterval(interval);
-        interval = setInterval(upArrow, 50);
-    }
-    else if (e.keyCode == '40') {
-    	clearInterval(interval);
-        interval = setInterval(downArrow, 50);
-    }
-    else if (e.keyCode == '37') {
-    	clearInterval(interval);
-        interval = setInterval(leftArrow, 50);
-    }
-    else if (e.keyCode == '39') {
-    	clearInterval(interval);
-        interval = setInterval(rightArrow, 50);
-    }
 }
 
 var reset = function(){
@@ -139,10 +144,7 @@ var reset = function(){
 		{x:30, y:380},
 		{x:30, y:370},
 	];
-	var element = document.querySelectorAll(".snake");
-	for(var  i = 0; i < element.length; i++){
-		element[i].parentNode.removeChild(element[i]);
-	}
+	removeSnake();
 	init();
 	createSnake();
 }
@@ -155,6 +157,13 @@ var isDead = function(){
 		clearInterval(interval);
 		document.querySelector(".score").textContent = "Score:0";
 		reset();
+	}
+	for(var i = 1; i < snake.body.length; i++){
+		if(snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y){
+			clearInterval(interval);
+			document.querySelector(".score").textContent = "Score:0";
+			reset();
+		}
 	}
 }
 
@@ -175,22 +184,35 @@ var createPlayArea = function(){
 	}
 };
 
-var createSnake = function(){
-	for(var  i = 0; i < snake.body.length; i++){
-		var element = document.createElement("div");
-		element.setAttribute("class", "snake");
-		element.style.marginLeft = snake.body[i].x + "px"; 
-		element.style.marginTop = snake.body[i].y + "px"; 
-		document.querySelector("#playArea").appendChild(element);
-	}
+function checkKey(e) {
+    e = e || window.event;
+    if (e.keyCode == '38') {
+    	clearInterval(interval);
+        interval = setInterval(directions.up, 50);
+    }
+    else if (e.keyCode == '40') {
+    	clearInterval(interval);
+        interval = setInterval(directions.down, 50);
+    }
+    else if (e.keyCode == '37') {
+    	clearInterval(interval);
+        interval = setInterval(directions.left, 50);
+    }
+    else if (e.keyCode == '39') {
+    	clearInterval(interval);
+        interval = setInterval(directions.right, 50);
+    }
 }
 
 var main = function(){
 	init();
 	createPlayArea();
 	createSnake();
-	document.onkeydown = checkKey;
 	produceFood();
+	document.onkeydown = checkKey;
+	console.log(state)
+	document.querySelector("#pause").onclick = state.pause;
+	document.querySelector("#resume").onclick = state.resume;
 };
 
 window.onload = main;

@@ -1,7 +1,23 @@
-#playArea{
-	width: 400px;
-	height: 400px;
-	background-color: pink;
+h1{
+	text-align: left;
+}
+
+.main{
+	width: 602px;
+	height: 602px;
+	background: grey;
+	border-style: solid;
+}
+
+.score{
+	text-align: right;
+	color: grey;
+	font-size: 20px;
+}
+
+.header{
+	width: 600px;
+	margin: 0 auto;
 }
 
 .food{
@@ -9,6 +25,20 @@
 	height:10px;
 	background: black;
 	position: absolute;
+}
+
+button{
+	width: 100px;
+	height: 40px;
+	margin-top: 20px;
+	font-size: 20px;
+	color: lightgrey;
+	background: grey;
+}
+
+button:hover{
+	background: lightgrey;
+	color: grey;
 }
 
 .pixel{
