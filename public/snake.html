@@ -7,18 +7,28 @@
 	<script src = "./source.js"></script>
 </head>
 <body>
+<div id="topHeader">
+<h1><center>Welcome to Snake Game</center></h1>
+	<div id="middleHeader">
+		Use left, rigth, up, down keys to play this game<br>
+		<a href="#">Click here to start the game</a>
+	</div>
+</div>
+
 	<center>
-	<div class="header">
+	<div class="header hidden">
 		<h1>Welcome to snake Game</h1>
 		<div class="score">Score:0</div>
 	</div>
-	<div class="main">
+	<div class="main hidden">
 		<div id = "playArea">
 			<div class="food"></div>
 		</div>
 		<button id="pause">pause</button>
 		<button id="resume">resume</button>
 	</div>
+	<audio class="hidden" id="eat" controls><source src='sound.mp3' type='audio/mpeg'></audio>
+	<audio class="hidden" id="crash" controls><source src='crash.mp3' type='audio/mpeg'></audio>
 	</center>
 </body>
 </html>

@@ -12,44 +12,68 @@ var food = {
 
 var init = function(){
 	snake.body = [
-		{x:30, y:390, background:'black'},
-		{x:30, y:380, background:'black'},
-		{x:30, y:370, background:'red'},
+		{x:30, y:390},
+		{x:30, y:380},
+		{x:30, y:370},
 	];
+	snake.direction = "down";
 };
-
-var tasks = {
-	increment:function(cordinate){
-		snake.body[0][cordinate]+=10;
-	},
-	decrement:function(cordinate){
-		snake.body[0][cordinate]-=10;
-	}
-}
-
-var move = function(direction, task, taskOn){
-	state.curruntStatus = "resume";
-	eatFood();
-	var preX = snake.body[0].x;
-	var preY = snake.body[0].y;
-	task(taskOn);
-	printSnake(preX, preY);
-	snake.direction = direction;
-	isDead();
-}
 
 var directions = {
 	up:function(){
-		move("up", tasks.decrement, 'y');
+		state.curruntStatus = "resume";
+		if(snake.direction == "down"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].y = snake.body[0].y-=10;
+		printSnake(preX, preY);
+		snake.direction = "up";
+	    isDead();
 	},
+
 	down:function(){
-		move("down", tasks.increment, 'y');
+		state.curruntStatus = "resume";
+		if(snake.direction == "up"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].y = snake.body[0].y+=10;
+		printSnake(preX, preY);
+		snake.direction = "down";
+	    isDead();
 	},
+
 	left:function(){
-		move("left", tasks.decrement, 'x');
+		state.curruntStatus = "resume";
+		if(snake.direction == "right"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].x = snake.body[0].x-=10;
+		printSnake(preX, preY);
+		snake.direction = "left";	    		
+		isDead();
 	},
+
 	right:function(){
-		move("right", tasks.increment, 'x');
+		state.curruntStatus = "resume";
+		if(snake.direction == "left"){
+			snake.body = snake.body.reverse();
+		}
+		eatFood();
+		var preX = snake.body[0].x;
+		var preY = snake.body[0].y;
+		snake.body[0].x = snake.body[0].x+=10
+		printSnake(preX, preY);
+		snake.direction = "right";	    	
+		isDead();
 	}
 };
 
@@ -73,7 +97,6 @@ var state = {
 var createSnake = function(){
 	for(var  i = 0; i < snake.body.length; i++){
 		var element = document.createElement("div");
-		element.style.background = snake.body[i].background;
 		element.setAttribute("class", "snake");
 		element.style.marginLeft = snake.body[i].x + "px"; 
 		element.style.marginTop = snake.body[i].y + "px"; 
@@ -96,8 +119,6 @@ var printSnake = function(preX, preY){
 
 var eatFood = function(){
 	if(snake.body[0].x == food.x && snake.body[0].y == food.y){
-		var soundTag = document.querySelector('#eat');
-		soundTag.play();
 		var score = document.querySelector(".score");
 		var currentScore = score.textContent.split(":")[1];
 		document.querySelector(".score").textContent = "Score:" + (++currentScore);
@@ -130,16 +151,6 @@ var reset = function(){
 	removeSnake();
 	init();
 	createSnake();
-	snake.direction = null;
-	snake.body.reverse();
-}
-
-var resetGame = function(){
-	clearInterval(interval);
-	var crash = document.querySelector('#crash');
-	crash.play();
-	document.querySelector(".score").textContent = "Score:0";
-	reset();
 }
 
 var isDead = function(){
@@ -147,11 +158,15 @@ var isDead = function(){
 		||snake.body[0].y == -10
 		||snake.body[0].x == 500
 		||snake.body[0].y == 500){
-		resetGame();
+		clearInterval(interval);
+		document.querySelector(".score").textContent = "Score:0";
+		reset();
 	}
 	for(var i = 1; i < snake.body.length; i++){
 		if(snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y){
-			resetGame();
+			clearInterval(interval);
+			document.querySelector(".score").textContent = "Score:0";
+			reset();
 		}
 	}
 }
@@ -173,34 +188,31 @@ var createPlayArea = function(){
 	}
 };
 
-var keyCodes = {'38':{canGo:'up',cantGo:'down'},'39':{canGo:'right',cantGo:'left'},'40':{canGo:'down',cantGo:'up'},'37':{canGo:'left',cantGo:'right'}};
-
-var chooseDirection = function(direction){
-	if(snake.direction !== direction.cantGo){
-		clearInterval(interval);
-	    interval = setInterval(directions[direction.canGo], 50);
-	}
-}
-
 function checkKey(e) {
     e = e || window.event;
-    chooseDirection(keyCodes[e.keyCode]);
+    if (e.keyCode == '38') {
+    	clearInterval(interval);
+        interval = setInterval(directions.up, 50);
+    }
+    else if (e.keyCode == '40') {
+    	clearInterval(interval);
+        interval = setInterval(directions.down, 50);
+    }
+    else if (e.keyCode == '37') {
+    	clearInterval(interval);
+        interval = setInterval(directions.left, 50);
+    }
+    else if (e.keyCode == '39') {
+    	clearInterval(interval);
+        interval = setInterval(directions.right, 50);
+    }
 }
 
 var main = function(){
-	document.querySelector('a').onclick = function(){
-		document.querySelector('.main').setAttribute("class","main");
-		document.querySelector('.header').setAttribute("class","header");
-		var middleHeader = document.querySelector('#middleHeader')
-		middleHeader.parentNode.removeChild(middleHeader);		
-		var topHeader = document.querySelector('#topHeader')
-		topHeader.parentNode.removeChild(topHeader);
-	}
 	init();
 	createPlayArea();
 	createSnake();
 	produceFood();
-	snake.body.reverse();
 	document.onkeydown = checkKey;
 	document.querySelector("#pause").onclick = state.pause;
 	document.querySelector("#resume").onclick = state.resume;
