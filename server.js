@@ -6,4 +6,4 @@ app.use(express.static('./'));
 app.get('/', function(req, res){
 	res.redirect('snake.html');
 })
-http.createServer(app).listen(8080);
+var server = http.createServer(app).listen(process.env.OPENSHIFT_NODEJS_PORT || 8080,process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
