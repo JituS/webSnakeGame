@@ -94,6 +94,17 @@ var printSnake = function(preX, preY){
 	createSnake();
 }
 
+var scoreRequest = function(score){
+	var req = new XMLHttpRequest()
+	req.onreadystatechange = function(){
+	    if (req.readyState == 4 && req.status == 200) {
+	    	document.querySelector('#highscore').textContent = "Highscore:"+(+req.responseText+1);
+		}
+	}
+	req.open('post', 'highscore', false);
+	req.send('highScore='+score);
+}
+
 var eatFood = function(){
 	if(snake.body[0].x == food.x && snake.body[0].y == food.y){
 		var soundTag = document.querySelector('#eat');
@@ -101,6 +112,7 @@ var eatFood = function(){
 		var score = document.querySelector(".score");
 		var currentScore = score.textContent.split(":")[1];
 		document.querySelector(".score").textContent = "Score:" + (++currentScore);
+		scoreRequest(currentScore);
 		snake.body.push({x:snake.body[0].x, y:snake.body[0].y});
 		produceFood();
 	}
@@ -178,7 +190,7 @@ var keyCodes = {'38':{canGo:'up',cantGo:'down'},'39':{canGo:'right',cantGo:'left
 var chooseDirection = function(direction){
 	if(snake.direction !== direction.cantGo){
 		clearInterval(interval);
-	    interval = setInterval(directions[direction.canGo], 50);
+	    interval = setInterval(directions[direction.canGo], 55);
 	}
 }
 
@@ -200,6 +212,7 @@ var main = function(){
 	createPlayArea();
 	createSnake();
 	produceFood();
+	scoreRequest(0);
 	snake.body.reverse();
 	document.onkeydown = checkKey;
 	document.querySelector("#pause").onclick = state.pause;
