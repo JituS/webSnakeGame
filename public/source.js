@@ -2,7 +2,8 @@ var interval = null;
 
 var snake = {
 	body: null,
-	direction: null
+	direction: null,
+	score: 0
 };
 
 var food = {
@@ -98,11 +99,12 @@ var scoreRequest = function(score){
 	var req = new XMLHttpRequest()
 	req.onreadystatechange = function(){
 	    if (req.readyState == 4 && req.status == 200) {
-	    	document.querySelector('#highscore').textContent = "Highscore:"+(+req.responseText+1);
+	    	console.log(req.responseText)
+	    	document.querySelector('#highscore').textContent = "Highscore:"+(+req.responseText);
 		}
 	}
 	req.open('post', 'highscore', false);
-	req.send('highScore='+score);
+	req.send('highScore='+score+'&snake='+JSON.stringify(snake));
 }
 
 var eatFood = function(){
@@ -110,8 +112,8 @@ var eatFood = function(){
 		var soundTag = document.querySelector('#eat');
 		soundTag.play();
 		var score = document.querySelector(".score");
-		var currentScore = score.textContent.split(":")[1];
-		document.querySelector(".score").textContent = "Score:" + (++currentScore);
+		var currentScore = ++snake.score;
+		document.querySelector(".score").textContent = "Score:" + (currentScore);
 		scoreRequest(currentScore);
 		snake.body.push({x:snake.body[0].x, y:snake.body[0].y});
 		produceFood();
@@ -143,6 +145,7 @@ var reset = function(){
 	init();
 	createSnake();
 	snake.direction = null;
+	snake.score = 0;
 	snake.body.reverse();
 }
 
